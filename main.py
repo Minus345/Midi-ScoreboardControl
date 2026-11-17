@@ -18,8 +18,28 @@ def parse_args():
 
 
 def search_midi():
-    mido.get_input_names()
-    with mido.open_input() as inport:
+    print("Select midi source:")
+    midi_source_list = []
+    source_counter = 0
+    for source in mido.get_input_names():
+        print(str(source_counter) + " : " + source)
+        midi_source_list.append(source)
+        source_counter += 1
+    print("Typ input number for midi source:")
+    line = input()
+    number = 0
+    try:
+        number = int(line)
+    except ValueError:
+        print("Invalid number")
+        sys.exit(0)
+
+    if number < 0 or number > len(midi_source_list):
+        print("Invalid number")
+        sys.exit(0)
+    print("Start midi input with source: " + midi_source_list[number])
+
+    with mido.open_input(midi_source_list[number]) as inport:
         for msg in inport:
             print(msg)
 

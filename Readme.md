@@ -1,4 +1,6 @@
 # Midi-ScoreboardControl
 
+Python Version: 3.12
+
 ## Startup Parameters:
-`pyton main.py <url> <evet> <heat>`
+`python main.py <url> <evet> <heat>`
