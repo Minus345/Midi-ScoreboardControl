@@ -1,6 +1,6 @@
 import sys
 import requests
-
+import signal
 
 import mido
 
@@ -71,11 +71,15 @@ def send_request():
     r = requests.post(url, data={"message": "header " + str(event) + " " + str(heat)})
     print("update to: Event: " + str(event) + " Heat: " + str(heat) + " Http Response: " + str(r.text))
 
+def signal_handler(sig, frame):
+    print('You pressed Ctrl+C!')
+    sys.exit(0)
+
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, signal_handler)
     parse_args()
     print("Midi-ScoreboardControl")
     print("url: " + url)
     print("event: " + str(event))
     print("heat: " + str(heat))
     search_midi()
-
