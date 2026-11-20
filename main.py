@@ -1,10 +1,12 @@
 import sys
+import requests
+
 
 import mido
 
 url = ""
-event = 0
-heat = 0
+event = 1
+heat = 1
 
 
 def parse_args():
@@ -18,6 +20,7 @@ def parse_args():
 
 
 def search_midi():
+    global event, heat
     print("Select midi source:")
     midi_source_list = []
     source_counter = 0
@@ -42,7 +45,31 @@ def search_midi():
     with mido.open_input(midi_source_list[number]) as inport:
         for msg in inport:
             print(msg)
+            if msg.type == "note_on" and msg.velocity > 0 and msg.channel == 0:
+                match msg.note:
+                    case 60:
+                        # prev event
+                        event -= 1
+                        heat = 1
+                        send_request()
+                    case 61:
+                        # prev heat
+                        heat -= 1
+                        send_request()
+                    case 62:
+                        # next event
+                        event += 1
+                        heat = 1
+                        send_request()
+                    case 63:
+                        # next heat
+                        heat += 1
+                        send_request()
 
+
+def send_request():
+    r = requests.post(url, data={"message": "header " + str(event) + " " + str(heat)})
+    print("update to: Event: " + str(event) + " Heat: " + str(heat) + " Http Response: " + str(r.text))
 
 if __name__ == '__main__':
     parse_args()
@@ -51,3 +78,4 @@ if __name__ == '__main__':
     print("event: " + str(event))
     print("heat: " + str(heat))
     search_midi()
+
